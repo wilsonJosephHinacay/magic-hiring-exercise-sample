@@ -1,4 +1,5 @@
 scalar DateTime
+scalar Date
 
 type Query {
     """
@@ -7,11 +8,17 @@ type Query {
     """
     properties: [Property!]!
 
-    # =====================================================================
-    # YOUR TASK: add a query returning today's arrivals for one property.
-    # The shape is up to you. Design it as you would for a real backoffice.
-    # =====================================================================
-    arrivals(propertyId: ID!): [Arrival!]!
+    """
+    Arrivals at one property for a single calendar day, ordered by arrival time.
+
+    "Today" is the property's local day (property.timezone), not the server's or
+    the browser's. `date` defaults to today in that zone; pass one to look at
+    another day. Cancelled and no-show reservations are not listed.
+
+    Errors with NOT_FOUND if the property does not exist, rather than returning
+    an empty list that would be indistinguishable from a quiet day.
+    """
+    arrivals(propertyId: ID!, date: Date): [Arrival!]!
 }
 
 type Property {
@@ -38,7 +45,9 @@ enum ReservationStatus {
 type Arrival {
     reservationId: ID!
     guestName: String!
+    "Instant of arrival (RFC 3339, with offset). Render it in the property's zone."
     arrival: DateTime!
     status: ReservationStatus!
+    "Null when no unit has been assigned yet."
     unit: Unit
 }
