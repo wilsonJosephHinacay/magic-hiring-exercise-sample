@@ -14,7 +14,7 @@ const config: CodegenConfig = {
     "src/gql/generated.ts": {
       plugins: ["typescript", "typescript-operations"],
       config: {
-        scalars: { DateTime: "string" },
+        scalars: { DateTime: "string", Date: "string" },
       },
     },
   },
